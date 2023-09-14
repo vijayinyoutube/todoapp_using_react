@@ -10,6 +10,7 @@ function InputComp() {
   const [completed, setIsCompleted] = useState<any>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputTextVal, setInputText] = useState();
+  const [oldVal, setOldVal] = useState<any>();
 
   // - - - Function to add data to local storage - - -
   const addData = (value) => {
@@ -49,6 +50,7 @@ function InputComp() {
   // - - -  - - - - - - COMPLETE DATA - - - - - - - - - - -
   const completeData = (value) => {
     console.log("Index - ", value);
+
     const tempVal = [...completed, value];
     console.log("tempVal - ", tempVal);
     setIsCompleted(tempVal);
@@ -58,8 +60,9 @@ function InputComp() {
 
   // - - -  - - - - - - EDIT DATA - - - - - - - - - - -
 
-  const handleTxtChange = (event) => {
-    console.log("value-", event.target.value);
+  const handleTxtChange = (event, index) => {
+    // console.log("value-", event.target.value);
+    console.log("REplacing Element index: ", event.target.value);
     setInputText(event.target.value);
   };
   const showModal = () => {
@@ -70,8 +73,11 @@ function InputComp() {
     console.log("index-", val);
     let temp = items;
     console.log("inputTxt", inputTextVal);
+    let i = temp.indexOf(oldVal);
+    temp[i] = inputTextVal;
+    console.log("NEW", temp);
     //  - - Replace logic here - - -
-    // localStorage.setItem(localDataKey, JSON.stringify(temp1));
+    localStorage.setItem(localDataKey, JSON.stringify(temp));
     // - - - - - - - - - - - - - - -
     setIsModalOpen(false);
   };
@@ -82,6 +88,8 @@ function InputComp() {
 
   const editData = (value) => {
     // Add replace logic
+    console.log("Edting..:", value);
+    setOldVal(value);
     showModal();
   };
   // - - -  - - - - - - - - - - - - - - - - - - - - - -
@@ -110,16 +118,15 @@ function InputComp() {
                   ) : (
                     <>
                       <Modal
-                        title="Edit your data"
+                        title="Enter new data to replace..."
                         open={isModalOpen}
-                        onOk={(value) => handleOk(index)}
+                        onOk={(e) => handleOk(index)}
                         okText="Edit"
                         onCancel={handleCancel}
                       >
                         <Input
-                          placeholder="Basic usage"
-                          defaultValue={itemVal}
-                          onChange={handleTxtChange}
+                          placeholder="your notes..."
+                          onChange={(e) => handleTxtChange(e, index)}
                         />
                       </Modal>
                       <a
